@@ -1,66 +1,88 @@
 import { useEffect, useRef } from 'react';
 
+const SENSITIVITY = 5;
+const MIN = 23;
+const MAX = 227;
+const DURATION = 1200;
+
 const ImageTrackComponent = () => {
-  const trackRef = useRef(null);
+  const trackRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    // Div holding images
     const track = trackRef.current;
 
+    // X coord of mouse when dragging
     let mouseDownAt = 0;
-    let percentage = 0;
 
-    const handleMouseDown = (e: { clientX: number; }) => {
+    // Scroll Percentage
+    let percentage = -MIN;
+
+    const updateTrackAndImages = () => {
+      track?.animate({
+        transform: `translate(${percentage}%, -50%)`
+      }, { duration: DURATION, fill: "forwards" });
+
+      const images = track?.querySelectorAll('img');
+      if (images) {
+        for (const image of images) {
+          image.animate({
+            objectPosition: `${Math.round(100 * (percentage / 250) + 100)}% center`
+          }, { duration: DURATION, fill: "forwards" });
+        }
+      }
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
       mouseDownAt = e.clientX;
     };
 
-    const handleMouseMove = (e: { clientX: number; }) => {
-      if (!mouseDownAt || !trackRef?.current) return;
- 
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!mouseDownAt || !track) return;
+
       const mouseDelta = mouseDownAt - e.clientX;
       const maxDelta = window.innerWidth / 2;
 
-      percentage = percentage + (mouseDelta / maxDelta) * - 100;
-      percentage = Math.min(percentage, -23);
-      percentage = Math.max(percentage, -227);
-      console.log("percentage", percentage);
+      percentage += (mouseDelta / maxDelta) * -100;
+      percentage = Math.min(percentage, -MIN);
+      percentage = Math.max(percentage, -MAX);
 
-      //track.style.transform = `translate(${percentage}%, -50%)`;
-      track.animate({
-        transform: `translate(${percentage}%, -50%)`
-      }, { duration: 800, fill: "forwards"});
-
-      const images = trackRef.current.querySelectorAll('img');
-      for (const image of images) {
-        //image.style.objectPosition = `${100 * (percentage/250) + 100}% 50%`;
-        image.animate({
-          objectPosition: `${Math.round(100 * (percentage/250) + 100)}% center`
-        }, { duration: 800, fill: "forwards"});
-  
-      }
+      mouseDownAt = e.clientX; // Update mouseDownAt to continue smooth drag
+      updateTrackAndImages();
     };
 
     const handleMouseUp = () => {
       mouseDownAt = 0;
     };
 
+    const handleWheel = (e: WheelEvent) => {
+      percentage += e.deltaY > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+      percentage = Math.min(percentage, -MIN);
+      percentage = Math.max(percentage, -MAX);
+      updateTrackAndImages();
+    };
+
+    // Attach event listeners
     window.addEventListener('mousedown', handleMouseDown);
     window.addEventListener('mousemove', handleMouseMove);
     window.addEventListener('mouseup', handleMouseUp);
+    window.addEventListener('wheel', handleWheel);
 
     return () => {
       window.removeEventListener('mousedown', handleMouseDown);
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('wheel', handleWheel);
     };
   }, []);
 
   return (
-    <div ref={trackRef} id="image-track" >
-      <img className="image  rounded-lg" src="/2023-07-30-0168.jpg" draggable="false" />
-      <img className="image  rounded-lg" src="/2023-07-30-0227.jpg" draggable="false" />
-      <img className="image  rounded-lg" src="/2023-07-30-0231.jpg" draggable="false" />
-      <img className="image  rounded-lg" src="/2023-07-30-0265.jpg" draggable="false" />
-      <img className="image  rounded-lg" src="/2023-07-30-0288.jpg" draggable="false" />
+    <div ref={trackRef} id="image-track">
+      <img className="image rounded-lg" src="/2023-07-30-0168.jpg" draggable="false" />
+      <img className="image rounded-lg" src="/2023-07-30-0227.jpg" draggable="false" />
+      <img className="image rounded-lg" src="/2023-07-30-0231.jpg" draggable="false" />
+      <img className="image rounded-lg" src="/2023-07-30-0265.jpg" draggable="false" />
+      <img className="image rounded-lg" src="/2023-07-30-0288.jpg" draggable="false" />
     </div>
   );
 };
