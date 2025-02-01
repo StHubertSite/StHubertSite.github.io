@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const SENSITIVITY = 5;
 const MIN = 23;
@@ -47,7 +47,8 @@ const ImageTrackComponent = () => {
       percentage = Math.min(percentage, -MIN);
       percentage = Math.max(percentage, -MAX);
 
-      mouseDownAt = e.clientX; // Update mouseDownAt to continue smooth drag
+      // Update mouseDownAt to continue smooth drag
+      mouseDownAt = e.clientX; 
       updateTrackAndImages();
     };
 
@@ -78,11 +79,14 @@ const ImageTrackComponent = () => {
 
   return (
     <div ref={trackRef} id="image-track">
-      <img className="image rounded-lg" src="/2023-07-30-0168.jpg" draggable="false" />
-      <img className="image rounded-lg" src="/2023-07-30-0227.jpg" draggable="false" />
-      <img className="image rounded-lg" src="/2023-07-30-0231.jpg" draggable="false" />
-      <img className="image rounded-lg" src="/2023-07-30-0265.jpg" draggable="false" />
-      <img className="image rounded-lg" src="/2023-07-30-0288.jpg" draggable="false" />
+      {["/2023-07-30-0168.jpg", "/2023-07-30-0227.jpg", "/2023-07-30-0231.jpg", "/2023-07-30-0265.jpg", "/2023-07-30-0288.jpg"].map((src, index) => (
+        <img
+          key={src}
+          className="image rounded-lg"
+          src={src}
+          draggable="false"
+        />
+      ))}
     </div>
   );
 };
