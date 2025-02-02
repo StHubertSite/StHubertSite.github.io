@@ -160,7 +160,7 @@ const ImageTrackComponent = () => {
               // transition: "transform 0.3s ease-in-out", // Smooth transition for scaling
               // zIndex: expandedImage === src ? 10 : 1, // Bring the expanded image on top
               // top: expandedImage === src ? "200vh" : "50%",
-              boxShadow: "inset 0px 0px 20px rgba(0, 0, 0, 0.5)", // Apply the inset shadow directly
+              // boxShadow: "inset 0px 0px 20px rgba(0, 0, 0, 0.5)", // Apply the inset shadow directly
               transition: "transform 0.5s ease", // Smooth transition when moving down
               transform:
                 expandedImage == src ? "translateY(-100vh)" : "translateY(0)", // Move down when clicked
