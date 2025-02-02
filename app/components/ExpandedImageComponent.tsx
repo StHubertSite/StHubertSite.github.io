@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import TransparentButton from "./TransparentButton";
+
 import StripedPage from "./StripedPage";
 
 interface ExpandedImageComponentProps {
@@ -29,12 +29,12 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
     <div
       className="expanded-image-container"
       style={{
-        position: "fixed",
+        position: "absolute",
         top: 0,
         left: 0,
         width: "100%",
         height: "100%",
-        overflow: "hidden",
+        overflow: "auto",
       }}
     >
       <div
@@ -56,24 +56,12 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
           width={500}
           height={100}
         />
-        <div
-          className="image-text"
-          style={{
-            position: "absolute",
-            top: "8%",
-            left: "50%",
-            transform: "translateX(-50%)",
-            color: "white",
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            padding: "5px 10px",
-            borderRadius: "5px",
-            fontSize: "24px", // Increased font size
-            fontWeight: "bold", // Added bold font weight for title
-          }}
-        >
+        <div className="image-text title">
           {src.replace("/", "").replace(".JPG", "")}
         </div>
       </div>
+      {/* Striped Page */}
+      {/* Will fly in from bottom->top */}
       <div
         className="striped-page-wrapper"
         style={{
@@ -81,16 +69,15 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
             ? "slidePageDown 1s ease-out forwards"
             : "slidePageUp 1s ease-out 0.5s forwards",
           position: "absolute",
-          top: 0,
+          top: "50%",
           left: 0,
           width: "100%",
-          height: "100%",
+          height: "50%",
           zIndex: 3,
         }}
       >
-        <StripedPage back={back} />
+        <StripedPage handleBack={handleBack} />
         {/* Back button */}
-        <TransparentButton onClick={handleBack} text={"Back"} />
       </div>
     </div>
   );
