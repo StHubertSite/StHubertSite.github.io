@@ -158,7 +158,10 @@ const ImageTrackComponent = () => {
             <div className="img-inset-shadow"></div>
 
             {/* Button over the image */}
-            <TransparentButton onClick={() => handleButtonClick(src)} />
+            <TransparentButton
+              onClick={() => handleButtonClick(src)}
+              text={""}
+            />
           </div>
         ))}
       </div>
