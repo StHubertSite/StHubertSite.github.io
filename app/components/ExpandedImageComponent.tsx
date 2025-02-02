@@ -26,13 +26,23 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
   };
 
   return (
-    <div className="expanded-image-container">
+    <div
+      className="expanded-image-container"
+      style={{
+        position: "fixed",
+        top: 0,
+        left: 0,
+        width: "100%",
+        height: "100%",
+        overflow: "hidden",
+      }}
+    >
       <div
         className="expand-image-wrapper"
         style={{
           animation: back
-            ? "slideUp 0.5s ease-out forwards"
-            : "slideDown 0.5s ease-out 0.5s forwards",
+            ? "slideUp 1s ease-out forwards"
+            : "slideDown 1s ease-out 0.5s forwards",
           position: "relative",
         }}
       >
@@ -68,8 +78,8 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
         className="striped-page-wrapper"
         style={{
           animation: back
-            ? "slidePageDown 0.5s ease-out forwards"
-            : "slidePageUp 0.5s ease-out 0.5s forwards",
+            ? "slidePageDown 1s ease-out forwards"
+            : "slidePageUp 1s ease-out 0.5s forwards",
           position: "absolute",
           top: 0,
           left: 0,
