@@ -2,7 +2,7 @@ import React from "react";
 
 interface TransparentButtonProps {
   onClick: () => void; // Define onClick as a function with no arguments and no return
-  text: "";
+  text: string; // Define text as a string
 }
 
 const TransparentButton: React.FC<TransparentButtonProps> = ({
