@@ -97,7 +97,9 @@ const ImageTrackComponent = () => {
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    window.addEventListener("wheel", handleWheel);
+    if (!expandedImage) {
+      window.addEventListener("wheel", handleWheel);
+    }
 
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
@@ -105,7 +107,7 @@ const ImageTrackComponent = () => {
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheel);
     };
-  }, []);
+  }, [expandedImage]);
 
   const handleButtonClick = (src: string) => {
     setExpandedImage(src); // Set the clicked image to be expanded
