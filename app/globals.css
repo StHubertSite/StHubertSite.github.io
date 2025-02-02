@@ -5,6 +5,8 @@
 :root {
   --background: #f9eacd;
   --foreground: #171717;
+  --primary-stripe-rgb: 240, 240, 240;
+  --secondary-stripe-rgb: 229, 229, 229;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -150,4 +152,54 @@ img {
   top: 0;
   left: 0;
   z-index: 2;
+}
+
+.striped-page {
+  background-size: 18px 18px;
+  background-image: linear-gradient(
+    45deg,
+    rgb(var(--primary-stripe-rgb)) 25%,
+    rgb(var(--secondary-stripe-rgb)) 25%,
+    rgb(var(--secondary-stripe-rgb)) 50%,
+    rgb(var(--primary-stripe-rgb)) 50%,
+    rgb(var(--primary-stripe-rgb)) 75%,
+    rgb(var(--secondary-stripe-rgb)) 75%,
+    rgb(var(--secondary-stripe-rgb)) 100%
+  );
+  animation: pan 360s linear infinite;
+  width: 100%;
+  height: 100vh;
+  position: relative; /* Ensure the pseudo-element is positioned correctly */
+}
+
+.striped-page-wrapper {
+  width: 100%;
+  height: 25%;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 2;
+  transition: transform 0.5s ease-in-out;
+  animation: slideUp 0.5s ease-out 0.5s forwards; /* Added forwards to keep the final state */
+  transform: translateY(100%); /* Initial state below the screen */
+}
+
+/* Animation for page going down below the screen */
+@keyframes slidePageDown {
+  0% {
+    transform: translateY(0%);
+  }
+  100% {
+    transform: translateY(100%); /* Adjusted to stay down */
+  }
+}
+
+/* Animation for page coming from below the screen */
+@keyframes slidePageUp {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(0%);
+  }
 }
