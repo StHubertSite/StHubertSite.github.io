@@ -3,15 +3,15 @@ import Image from "next/image";
 import TransparentButton from "./TransparentButton";
 import ExpandedImageComponent from "./ExpandedImageComponent";
 
-const SENSITIVITY = 10;
+const SENSITIVITY = 3;
 
 const mainImages = [
   "/2023-07-30-0168.JPG",
-  "/2023-07-30-0227.JPG",
   "/2023-07-30-0231.JPG",
+  "/2023-07-30-0227.JPG",
+  "/2024-09-17-0005.JPG",
   "/2023-07-30-0265.JPG",
   "/2023-07-30-0288.JPG",
-  "/2024-09-17-0005.JPG",
 ];
 
 const MIN = 0;
@@ -87,7 +87,26 @@ const ImageTrackComponent = () => {
     };
 
     const handleWheel = (e: WheelEvent) => {
-      percentage += e.deltaY > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+      e.preventDefault();
+
+      const isTrackpad = e.deltaMode === 0 && Math.abs(e.deltaY) < 100;
+
+      if (isTrackpad) {
+        // Handle trackpad scroll
+        if (e.deltaY !== 0) {
+          percentage += e.deltaY > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+        } else if (e.deltaX !== 0) {
+          percentage += e.deltaX > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+        }
+      } else {
+        // Handle scroll wheel
+        if (e.deltaY !== 0) {
+          percentage += e.deltaY > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
+        } else if (e.deltaX !== 0) {
+          percentage += e.deltaX > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
+        }
+      }
+
       percentage = Math.min(percentage, -MIN);
       percentage = Math.max(percentage, -MAX);
       updateTrackAndImages();
