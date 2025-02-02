@@ -1,4 +1,6 @@
 import React from "react";
+import Image from "next/image";
+import TransparentButton from "./TransparentButton";
 
 interface ExpandedImageComponentProps {
   src: string;
@@ -11,10 +13,19 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
 }) => {
   return (
     <div className="expanded-image-container">
-      <button onClick={onBack} className="back-button">
-        Back
-      </button>
-      <img src={src} alt="Expanded" className="expanded-image" />
+      {/* Back button */}
+      <TransparentButton onClick={onBack} text={"Back"} />
+
+      {/* Background image */}
+      {/* Will fly in from top->down */}
+      <Image
+        className="expanded-image"
+        src={src}
+        alt={`Expanded Image`}
+        draggable="false"
+        width={500}
+        height={100}
+      />
     </div>
   );
 };

@@ -2,9 +2,13 @@ import React from "react";
 
 interface TransparentButtonProps {
   onClick: () => void; // Define onClick as a function with no arguments and no return
+  text: "";
 }
 
-const TransparentButton: React.FC<TransparentButtonProps> = ({ onClick }) => {
+const TransparentButton: React.FC<TransparentButtonProps> = ({
+  onClick,
+  text,
+}) => {
   return (
     <button
       className="text-gray-800 font-semibold py-2 px-4 rounded shadow"
@@ -18,7 +22,7 @@ const TransparentButton: React.FC<TransparentButtonProps> = ({ onClick }) => {
         zIndex: 2,
         backgroundColor: "rgba(255, 255, 255, 0.3)",
         backdropFilter: "blur(8px)",
-        color: "white",
+        color: "black",
         border: "none",
         transition: "transform 0.2s ease, background-color 0.3s ease",
       }}
@@ -37,7 +41,9 @@ const TransparentButton: React.FC<TransparentButtonProps> = ({ onClick }) => {
         e.currentTarget.style.transform = "translateX(-50%) scale(1.1)";
       }}
       onClick={onClick}
-    ></button>
+    >
+      {text}
+    </button>
   );
 };
 

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import TransparentButton from "./TransparentButton";
 import ExpandedImageComponent from "./ExpandedImageComponent";
 
@@ -13,8 +14,6 @@ const mainImages = [
   "/2024-09-17-0005.JPG",
 ];
 
-const number = mainImages.length;
-
 const MIN = 0;
 const MAX = 100;
 const DURATION = 1200;
@@ -24,16 +23,6 @@ const ImageTrackComponent = () => {
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Preload images
-    const preloadImages = (srcArray: string[]) => {
-      srcArray.forEach((src) => {
-        const img = new Image();
-        img.src = src;
-      });
-    };
-
-    preloadImages(mainImages);
-
     // Check URL for image query parameter
     const params = new URLSearchParams(window.location.search);
     const imageParam = params.get("image");
@@ -63,16 +52,7 @@ const ImageTrackComponent = () => {
 
       const images = track?.querySelectorAll("img");
       if (images) {
-        images.forEach((image, index) => {
-          //   image.animate(
-          //     {
-          //       objectPosition: `${Math.round(
-          //         4 * (number / 2) * index + percentage + 100
-          //       )}% center`,
-          //     },
-          //     { duration: DURATION, fill: "forwards" }
-          //   );
-          // });
+        images.forEach((image) => {
           image.animate(
             {
               objectPosition: `${Math.round(percentage + 100)}% center`,
@@ -167,11 +147,13 @@ const ImageTrackComponent = () => {
             }}
           >
             {/* Image */}
-            <img
+            <Image
               className="image rounded-lg"
               src={src}
               alt={`Image ${index}`}
               draggable="false"
+              width={500}
+              height={300}
             />
             <div className="img-inset-shadow"></div>
 
