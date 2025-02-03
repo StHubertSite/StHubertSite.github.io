@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import TransparentButton from "./TransparentButton";
 import ExpandedImageComponent from "./ExpandedImageComponent";
+import { get } from "http";
 
 const SENSITIVITY = 3;
 
@@ -23,16 +24,6 @@ const ImageTrackComponent = () => {
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check URL for image query parameter
-    const params = new URLSearchParams(window.location.search);
-    const imageParam = params.get("image");
-    if (imageParam) {
-      const imageUrl = mainImages.find((src) => src.includes(imageParam));
-      if (imageUrl) {
-        setExpandedImage(imageUrl);
-      }
-    }
-
     // Div holding images
     const track = trackRef.current;
 
@@ -63,11 +54,32 @@ const ImageTrackComponent = () => {
       }
     };
 
+    const getExpandedImageFromURL = () => {
+      const params = new URLSearchParams(window.location.search);
+      const imageParam = params.get("image");
+      if (imageParam) {
+        const imageUrl = mainImages.find((src) => src.includes(imageParam));
+        if (imageUrl) {
+          setExpandedImage(imageUrl);
+          const imageIndex = mainImages.indexOf(imageUrl);
+          const numberofImages = mainImages.length;
+          percentage = (-100 / numberofImages) * imageIndex - 10;
+          updateTrackAndImages();
+        }
+      }
+    };
+
+    // Check URL for image query parameter
+    getExpandedImageFromURL();
+
     const handleMouseDown = (e: MouseEvent) => {
+      if (expandedImage) return;
+
       mouseDownAt = e.clientX;
     };
 
     const handleMouseMove = (e: MouseEvent) => {
+      if (expandedImage) return;
       if (!mouseDownAt || !track) return;
 
       const mouseDelta = mouseDownAt - e.clientX;
@@ -88,6 +100,8 @@ const ImageTrackComponent = () => {
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
+
+      if (expandedImage) return;
 
       const isTrackpad = e.deltaMode === 0 && Math.abs(e.deltaY) < 100;
 
@@ -116,9 +130,7 @@ const ImageTrackComponent = () => {
     window.addEventListener("mousedown", handleMouseDown);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
-    if (!expandedImage) {
-      window.addEventListener("wheel", handleWheel);
-    }
+    window.addEventListener("wheel", handleWheel);
 
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
