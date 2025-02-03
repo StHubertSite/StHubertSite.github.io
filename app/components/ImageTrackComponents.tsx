@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import TransparentButton from "./TransparentButton";
 import ExpandedImageComponent from "./ExpandedImageComponent";
-import { get } from "http";
 
 const SENSITIVITY = 3;
 
@@ -23,22 +22,23 @@ const ImageTrackComponent = () => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
+  // Percentage of the track to show
+  const [percentage, setPercentage] = useState<number>(MIN);
+
+  // X coord of mouse when dragging
+  const [mouseDownAt, setMouseDownAt] = useState<number>(0);
+
   useEffect(() => {
     // Div holding images
     const track = trackRef.current;
 
-    // X coord of mouse when dragging
-    let mouseDownAt = 0;
-
-    // Scroll Percentage
-    let percentage = MIN;
-
-    const updateTrackAndImages = () => {
+    const updateTrackAndImages = (duration: number) => {
+      console.log(percentage);
       track?.animate(
         {
           transform: `translate(${percentage}%, -50%)`,
         },
-        { duration: DURATION, fill: "forwards" }
+        { duration: duration, fill: "forwards" }
       );
 
       const images = track?.querySelectorAll("img");
@@ -48,7 +48,7 @@ const ImageTrackComponent = () => {
             {
               objectPosition: `${Math.round(percentage + 100)}% center`,
             },
-            { duration: DURATION, fill: "forwards" }
+            { duration: duration, fill: "forwards" }
           );
         });
       }
@@ -63,19 +63,16 @@ const ImageTrackComponent = () => {
           setExpandedImage(imageUrl);
           const imageIndex = mainImages.indexOf(imageUrl);
           const numberofImages = mainImages.length;
-          percentage = (-100 / numberofImages) * imageIndex - 10;
-          updateTrackAndImages();
+          setPercentage((-100 / numberofImages) * imageIndex - 10);
+          updateTrackAndImages(DURATION / 3);
         }
       }
     };
 
-    // Check URL for image query parameter
-    getExpandedImageFromURL();
-
     const handleMouseDown = (e: MouseEvent) => {
       if (expandedImage) return;
 
-      mouseDownAt = e.clientX;
+      setMouseDownAt(e.clientX);
     };
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -85,17 +82,20 @@ const ImageTrackComponent = () => {
       const mouseDelta = mouseDownAt - e.clientX;
       const maxDelta = window.innerWidth / 2;
 
-      percentage += (mouseDelta / maxDelta) * -100;
-      percentage = Math.min(percentage, -MIN);
-      percentage = Math.max(percentage, -MAX);
+      let newPercentage = percentage + (mouseDelta / maxDelta) * -100;
+
+      console.log("newPercentage", newPercentage);
+
+      newPercentage = Math.min(newPercentage, -MIN);
+      setPercentage(Math.max(newPercentage, -MAX));
 
       // Update mouseDownAt to continue smooth drag
-      mouseDownAt = e.clientX;
-      updateTrackAndImages();
+      setMouseDownAt(e.clientX);
+      updateTrackAndImages(DURATION);
     };
 
     const handleMouseUp = () => {
-      mouseDownAt = 0;
+      setMouseDownAt(0);
     };
 
     const handleWheel = (e: WheelEvent) => {
@@ -105,25 +105,28 @@ const ImageTrackComponent = () => {
 
       const isTrackpad = e.deltaMode === 0 && Math.abs(e.deltaY) < 100;
 
+      let newPercentage = percentage;
+
       if (isTrackpad) {
         // Handle trackpad scroll
         if (e.deltaY !== 0) {
-          percentage += e.deltaY > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+          newPercentage += e.deltaY > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
         } else if (e.deltaX !== 0) {
-          percentage += e.deltaX > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
+          newPercentage += e.deltaX > 0 ? -SENSITIVITY : SENSITIVITY; // Adjust sensitivity if needed
         }
       } else {
         // Handle scroll wheel
         if (e.deltaY !== 0) {
-          percentage += e.deltaY > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
+          newPercentage += e.deltaY > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
         } else if (e.deltaX !== 0) {
-          percentage += e.deltaX > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
+          newPercentage += e.deltaX > 0 ? -SENSITIVITY * 3 : SENSITIVITY * 3; // Adjust sensitivity if needed
         }
       }
 
-      percentage = Math.min(percentage, -MIN);
-      percentage = Math.max(percentage, -MAX);
-      updateTrackAndImages();
+      newPercentage = Math.min(newPercentage, -MIN);
+      setPercentage(Math.max(newPercentage, -MAX));
+
+      updateTrackAndImages(DURATION);
     };
 
     // Attach event listeners
@@ -132,15 +135,20 @@ const ImageTrackComponent = () => {
     window.addEventListener("mouseup", handleMouseUp);
     window.addEventListener("wheel", handleWheel);
 
+    // Check URL for image query parameter
+    getExpandedImageFromURL();
+
     return () => {
       window.removeEventListener("mousedown", handleMouseDown);
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheel);
     };
-  }, [expandedImage]);
+  }, [expandedImage, percentage, mouseDownAt, trackRef]);
 
   const handleButtonClick = (src: string) => {
+    if (expandedImage) return;
+
     setExpandedImage(src); // Set the clicked image to be expanded
     const newUrl = `${window.location.pathname}?image=${encodeURIComponent(
       src.replace(".JPG", "")
