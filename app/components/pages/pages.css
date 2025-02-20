@@ -1,5 +1,5 @@
 .visit-container {
-  padding: 2.5% 20px 5% 20px;
+  padding: 0.5rem 20px 5% 20px;
 }
 
 .cards-grid {
@@ -13,8 +13,12 @@
   flex: 1 1 30%;
 }
 
-.card-column:nth-child(2) {
-  margin-top: 5%;
+.card-column:nth-child(1) {
+  margin-top: 1rem;
+}
+
+.card-column:nth-child(3) {
+  margin-top: 1rem;
 }
 
 .card {
@@ -43,4 +47,10 @@
   height: auto;
   border-radius: 10px;
   margin-bottom: 10px;
+}
+
+.card h2:last-child,
+.card p:last-child,
+.card img:last-child {
+  margin-bottom: 0;
 }

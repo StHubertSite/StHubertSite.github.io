@@ -1,8 +1,9 @@
 import React from "react";
 import "./pages.css";
 import TransparentButtonComponent from "../TransparentButtonComponent";
+import TransparentBackButton from "../TransparentBackButton";
 
-const BenchGrad = ({}) => {
+const BenchGrad = ({ handleBack }) => {
   document.getElementById("PageTitle").innerText = "I love you so much Olivia!";
 
   const handleSoMuch = () => {
@@ -35,6 +36,7 @@ const BenchGrad = ({}) => {
           </div>
         </div>
         <div className="card-column">
+          <TransparentBackButton onClick={handleBack} text={"Back"} />
           <div className="card">
             <h2>Olivia, There isn't anything I would not do for you!</h2>
             <p>

@@ -9,6 +9,7 @@
   --secondary-stripe-rgb: 229, 229, 229;
   --current-aspect-ratio: calc(100vw / 100vh);
   overscroll-behavior: none;
+  overflow: hidden;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,7 +30,7 @@ body {
   width: 100%;
   margin: 0;
   overflow-x: hidden; /* Hide horizontal scroll overflow */
-  overflow-y: auto;
+  overflow-y: hidden;
 }
 
 #image-track {
@@ -225,9 +226,9 @@ img {
   top: 100%;
   left: 0;
   z-index: 2;
-  transition: transform 0.5s ease-in-out;
-  animation: slideUp 1s ease-out 0.5s forwards; /* Added forwards to keep the final state */
-  transform: translateY(200%); /* Initial state below the screen */
+  transition: transform 0.5s ease;
+  animation: slideUp 1s cubic-bezier(0.18, 0.53, 0, 1) 0.5s forwards; /* Added forwards to keep the final state */
+  transform: translateY(2000%); /* Initial state below the screen */
 }
 
 /* Animation for page going down below the screen */
@@ -236,14 +237,14 @@ img {
     transform: translateY(calc(50% - (100vh - 100vw) / vh));
   }
   100% {
-    transform: translateY(200%); /* Adjusted to stay down */
+    transform: translateY(2000%); /* Adjusted to stay down */
   }
 }
 
 /* Animation for page coming from below the screen */
 @keyframes slidePageUp {
   0% {
-    transform: translateY(200%);
+    transform: translateY(2000%);
   }
   100% {
     transform: translateY(calc(50% - (100vh - 2 * 100vw / 3)));
@@ -258,14 +259,14 @@ img {
       transform: translateY(calc(0% - (100vh - 100vw) / vh));
     }
     100% {
-      transform: translateY(200%); /* Adjusted to stay down */
+      transform: translateY(2000%); /* Adjusted to stay down */
     }
   }
 
   /* Animation for page coming from below the screen */
   @keyframes slidePageUp {
     0% {
-      transform: translateY(200%);
+      transform: translateY(2000%);
     }
     100% {
       transform: translateY(calc(0% - (100vh - 2 * 100vw / 3)));

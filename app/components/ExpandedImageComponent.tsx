@@ -67,7 +67,7 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
         style={{
           animation: back
             ? "slidePageDown 1s ease-out forwards"
-            : "slidePageUp 1s ease-out 0.5s forwards",
+            : "slidePageUp 1s cubic-bezier(.18,.53,0,1) 0.5s forwards",
           position: "absolute",
           top: "50%",
           left: 0,
