@@ -10,15 +10,24 @@ const StripedPage: React.FC<StripedPageProps> = ({
   handleBack,
   componentName,
 }) => {
-  const [DynamicComponent, setDynamicComponent] = useState<React.FC | null>(
-    null
-  );
+  interface DynamicComponentProps {
+    handleBack: () => void;
+  }
+
+  const [DynamicComponent, setDynamicComponent] =
+    useState<React.FC<DynamicComponentProps> | null>(null);
 
   useEffect(() => {
     if (componentName) {
       const loadComponent = async () => {
-        const { default: Component } = await import(`./pages/${componentName}`);
-        setDynamicComponent(() => Component);
+        try {
+          const { default: Component } = await import(
+            `./pages/${componentName}`
+          );
+          setDynamicComponent(() => Component);
+        } catch {
+          setDynamicComponent(() => null);
+        }
       };
       loadComponent();
     }
@@ -30,11 +39,12 @@ const StripedPage: React.FC<StripedPageProps> = ({
         <div className="striped-page">
           {" "}
           <div>
-            <TransparentBackButton onClick={handleBack} text={"Back"} />
-            {DynamicComponent && (
+            {DynamicComponent ? (
               <Suspense fallback={<div>Loading...</div>}>
-                <DynamicComponent />
+                <DynamicComponent handleBack={handleBack} />
               </Suspense>
+            ) : (
+              <TransparentBackButton onClick={handleBack} text={"Back"} />
             )}
           </div>
         </div>

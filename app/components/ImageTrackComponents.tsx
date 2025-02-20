@@ -23,6 +23,12 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
   // X coord of mouse when dragging
   const [mouseDownAt, setMouseDownAt] = useState<number>(0);
 
+  // State to track loaded images
+  const [loadedImages, setLoadedImages] = useState<number>(0);
+
+  // State to track if all images are loaded
+  const [allImagesLoaded, setAllImagesLoaded] = useState<boolean>(false);
+
   useEffect(() => {
     // Div holding images
     const track = trackRef.current;
@@ -68,8 +74,6 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
     const handleMouseDown = (e: MouseEvent) => {
       if (expandedImage) return;
 
-      e.preventDefault();
-
       setMouseDownAt(e.clientX);
     };
 
@@ -95,8 +99,6 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
     };
 
     const handleWheel = (e: WheelEvent) => {
-      e.preventDefault();
-
       if (expandedImage) return;
 
       const isTrackpad = e.deltaMode === 0 && Math.abs(e.deltaY) < 100;
@@ -140,7 +142,7 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheel);
     };
-  }, [expandedImage, percentage, mouseDownAt, trackRef]);
+  }, [mainImages, expandedImage, percentage, mouseDownAt, trackRef]);
 
   const handleButtonClick = (src: string) => {
     if (expandedImage) return;
@@ -157,13 +159,30 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
     window.history.pushState({}, "", window.location.pathname);
   };
 
+  const handleImageLoad = () => {
+    setLoadedImages((prev) => prev + 1);
+  };
+
+  useEffect(() => {
+    if (loadedImages === mainImages.length) {
+      console.log("All images are loaded");
+      setAllImagesLoaded(true);
+    }
+  }, [loadedImages, mainImages.length]);
+
   return (
     <div>
-      {expandedImage && (
+      {expandedImage && allImagesLoaded && (
         <ExpandedImageComponent src={expandedImage} onBack={handleBack} />
       )}
       <div
-        style={{ zIndex: expandedImage ? -100 : 1 }}
+        style={{
+          zIndex: expandedImage ? -100 : 1,
+          opacity: allImagesLoaded ? 1 : 0,
+          transition: expandedImage
+            ? "none"
+            : "opacity 1s cubic-bezier(0.68, -0.55, 0.27, 1.55)",
+        }}
         ref={trackRef}
         id="image-track"
       >
@@ -174,10 +193,6 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
               position: "relative",
               display: "inline-block",
               marginRight: "10px",
-              // transition: "transform 0.3s ease-in-out", // Smooth transition for scaling
-              // zIndex: expandedImage === src ? 10 : 1, // Bring the expanded image on top
-              // top: expandedImage === src ? "200vh" : "50%",
-              // boxShadow: "inset 0px 0px 20px rgba(0, 0, 0, 0.5)", // Apply the inset shadow directly
               transition: "transform 0.5s ease", // Smooth transition when moving down
               transform:
                 expandedImage == src ? "translateY(-100vh)" : "translateY(0)", // Move down when clicked
@@ -191,6 +206,8 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
               draggable="false"
               width={500}
               height={300}
+              loading="eager"
+              onLoad={handleImageLoad}
             />
             <div className="img-inset-shadow"></div>
 
