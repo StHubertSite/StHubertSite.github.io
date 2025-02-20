@@ -213,7 +213,8 @@ img {
   );
   animation: pan 360s linear infinite;
   width: 100%;
-  height: 300vh;
+  height: auto;
+  min-height: 100vh;
   position: relative; /* Ensure the pseudo-element is positioned correctly */
 }
 
