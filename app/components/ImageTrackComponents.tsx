@@ -10,7 +10,7 @@ const MAX = 100;
 const DURATION = 1200;
 
 interface ImageTrackComponentProps {
-  mainImages: string[];
+  mainImages: { src: string; buttonText?: string }[];
 }
 
 const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
@@ -52,10 +52,12 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
       const params = new URLSearchParams(window.location.search);
       const imageParam = params.get("image");
       if (imageParam) {
-        const imageUrl = mainImages.find((src) => src.includes(imageParam));
-        if (imageUrl) {
-          setExpandedImage(imageUrl);
-          const imageIndex = mainImages.indexOf(imageUrl);
+        const imageObj = mainImages.find((image) =>
+          image.src.includes(imageParam)
+        );
+        if (imageObj) {
+          setExpandedImage(imageObj.src);
+          const imageIndex = mainImages.indexOf(imageObj);
           const numberofImages = mainImages.length;
           setPercentage((-100 / numberofImages) * imageIndex - 10);
           updateTrackAndImages(DURATION / 3);
@@ -165,7 +167,7 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
         ref={trackRef}
         id="image-track"
       >
-        {mainImages.map((src, index) => (
+        {mainImages.map(({ src, buttonText }, index) => (
           <div
             key={src}
             style={{
@@ -195,7 +197,7 @@ const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
             {/* Button over the image */}
             <TransparentButton
               onClick={() => handleButtonClick(src)}
-              text={""}
+              text={buttonText || ""}
             />
           </div>
         ))}

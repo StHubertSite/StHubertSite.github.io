@@ -42,7 +42,17 @@ const TransparentButton: React.FC<TransparentButtonProps> = ({
       }}
       onClick={onClick}
     >
-      {text}
+      <p
+        style={{
+          fontWeight: "bold",
+          textAlign: "center",
+          margin: 0,
+          position: "relative",
+          top: text.length > 15 ? "-0.3rem" : "0", // Adjust top offset based on text length
+        }}
+      >
+        {text}
+      </p>
     </button>
   );
 };
