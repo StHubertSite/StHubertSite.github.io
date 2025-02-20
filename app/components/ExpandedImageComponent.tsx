@@ -56,7 +56,7 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
           width={500}
           height={100}
         />
-        <div className="image-text title">
+        <div id="PageTitle" className="image-text title">
           {src.replace("/", "").replace(".JPG", "")}
         </div>
       </div>
@@ -76,8 +76,10 @@ const ExpandedImageComponent: React.FC<ExpandedImageComponentProps> = ({
           zIndex: 3,
         }}
       >
-        <StripedPage handleBack={handleBack} />
-        {/* Back button */}
+        <StripedPage
+          handleBack={handleBack}
+          componentName={src.split("/").pop()?.replace(".JPG", "") || ""}
+        />
       </div>
     </div>
   );

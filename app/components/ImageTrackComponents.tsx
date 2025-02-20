@@ -5,20 +5,15 @@ import ExpandedImageComponent from "./ExpandedImageComponent";
 
 const SENSITIVITY = 3;
 
-const mainImages = [
-  "/2023-07-30-0168.JPG",
-  "/2023-07-30-0231.JPG",
-  "/2023-07-30-0227.JPG",
-  "/2024-09-17-0005.JPG",
-  "/2023-07-30-0265.JPG",
-  "/2023-07-30-0288.JPG",
-];
-
 const MIN = 0;
 const MAX = 100;
 const DURATION = 1200;
 
-const ImageTrackComponent = () => {
+interface ImageTrackComponentProps {
+  mainImages: string[];
+}
+
+const ImageTrackComponent = ({ mainImages }: ImageTrackComponentProps) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
 
@@ -33,7 +28,6 @@ const ImageTrackComponent = () => {
     const track = trackRef.current;
 
     const updateTrackAndImages = (duration: number) => {
-      console.log(percentage);
       track?.animate(
         {
           transform: `translate(${percentage}%, -50%)`,
@@ -72,6 +66,8 @@ const ImageTrackComponent = () => {
     const handleMouseDown = (e: MouseEvent) => {
       if (expandedImage) return;
 
+      e.preventDefault();
+
       setMouseDownAt(e.clientX);
     };
 
@@ -83,8 +79,6 @@ const ImageTrackComponent = () => {
       const maxDelta = window.innerWidth / 2;
 
       let newPercentage = percentage + (mouseDelta / maxDelta) * -100;
-
-      console.log("newPercentage", newPercentage);
 
       newPercentage = Math.min(newPercentage, -MIN);
       setPercentage(Math.max(newPercentage, -MAX));
