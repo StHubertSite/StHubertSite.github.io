@@ -21,7 +21,7 @@ const generateImagesForModel = (model: ModelConfig) => {
   const images = [];
   for (let i = model.startFrame; i <= model.endFrame; i++) {
     images.push({
-      src: `/${model.folderName}/${i.toString().padStart(4, "0")}.PNG`,
+      src: `/${model.folderName}/${i.toString().padStart(4, "0")}.png`,
       buttonText: model.name,
     });
   }
