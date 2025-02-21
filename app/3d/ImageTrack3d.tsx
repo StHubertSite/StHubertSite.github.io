@@ -9,30 +9,54 @@ const MIN = 0;
 const MAX = 100;
 const DURATION = 1200;
 const animationSpeed = 42; // ~24fps
-
-interface ModelImageTrackProps {
-  mainImages: { src: string; buttonText?: string }[];
-  modelId: string; // Add modelId to track which model this is
+interface ModelConfig {
+  name: string;
+  startFrame: number;
+  endFrame: number;
+  folderName: string;
 }
 
-const ImageTrackComponent = ({ mainImages, modelId }: ModelImageTrackProps) => {
+interface ModelImageTrackProps {
+  models: ModelConfig[];
+}
+
+const ImageTrackComponent = ({ models }: ModelImageTrackProps) => {
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [expandedImage, setExpandedImage] = useState<string | null>(null);
-  const [currentFrame, setCurrentFrame] = useState(0);
-
-  // Percentage of the track to show
+  const [currentFrames, setCurrentFrames] = useState<{ [key: string]: number }>(
+    Object.fromEntries(models.map((model) => [model.folderName, 0]))
+  );
   const [percentage, setPercentage] = useState<number>(MIN);
-
-  // X coord of mouse when dragging
   const [mouseDownAt, setMouseDownAt] = useState<number>(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentFrame((prev) => (prev + 1) % mainImages.length);
-    }, animationSpeed);
+  // Generate images array for all models
+  const allModelImages = models.map((model) => ({
+    model,
+    images: Array.from(
+      { length: model.endFrame - model.startFrame + 1 },
+      (_, i) => ({
+        src: `/${model.folderName}/${(i + model.startFrame)
+          .toString()
+          .padStart(4, "0")}.png`,
+        buttonText: model.name,
+      })
+    ),
+  }));
 
-    return () => clearInterval(interval);
-  }, [mainImages.length]);
+  useEffect(() => {
+    const intervals = models.map((model) => {
+      return setInterval(() => {
+        setCurrentFrames((prev) => ({
+          ...prev,
+          [model.folderName]:
+            (prev[model.folderName] + 1) %
+            (model.endFrame - model.startFrame + 1),
+        }));
+      }, animationSpeed);
+    });
+
+    return () => intervals.forEach(clearInterval);
+  }, [models]);
 
   useEffect(() => {
     // Div holding images
@@ -61,15 +85,15 @@ const ImageTrackComponent = ({ mainImages, modelId }: ModelImageTrackProps) => {
 
     const getExpandedImageFromURL = () => {
       const params = new URLSearchParams(window.location.search);
-      const imageParam = params.get("image");
-      if (imageParam) {
-        const imageObj = mainImages.find((image) =>
-          image.src.includes(imageParam)
+      const modelParam = params.get("folderName");
+      if (modelParam) {
+        const modelOBJ = models.find((model) =>
+          model.folderName.includes(modelParam)
         );
-        if (imageObj) {
-          setExpandedImage(imageObj.src);
-          const imageIndex = mainImages.indexOf(imageObj);
-          const numberofImages = mainImages.length;
+        if (modelOBJ) {
+          setExpandedImage(modelOBJ.folderName);
+          const imageIndex = models.indexOf(modelOBJ);
+          const numberofImages = models.length;
           setPercentage((-100 / numberofImages) * imageIndex - 10);
           updateTrackAndImages(DURATION / 3);
         }
@@ -147,15 +171,13 @@ const ImageTrackComponent = ({ mainImages, modelId }: ModelImageTrackProps) => {
       window.removeEventListener("mouseup", handleMouseUp);
       window.removeEventListener("wheel", handleWheel);
     };
-  }, [mainImages, expandedImage, percentage, mouseDownAt, trackRef]);
+  }, [models, expandedImage, percentage, mouseDownAt, trackRef]);
 
   // Modify URL handling to include modelId
-  const handleButtonClick = (src: string) => {
+  const handleButtonClick = (folderName: string) => {
     if (expandedImage) return;
-    setExpandedImage(src);
-    const newUrl = `${
-      window.location.pathname
-    }?model=${modelId}&image=${encodeURIComponent(src.replace(".PNG", ""))}`;
+    setExpandedImage(folderName);
+    const newUrl = `${window.location.pathname}?model=${folderName}`;
     window.history.pushState({ path: newUrl }, "", newUrl);
   };
 
@@ -177,33 +199,46 @@ const ImageTrackComponent = ({ mainImages, modelId }: ModelImageTrackProps) => {
             : "opacity 1s cubic-bezier(0.68, -0.55, 0.27, 1.55)",
         }}
         ref={trackRef}
-        id="image-track"
+        id={"image-track"}
       >
-        <div
-          className="relative inline-block"
-          style={{
-            marginRight: "10px",
-          }}
-        >
-          <Image
-            src={mainImages[currentFrame].src}
-            alt={`${modelId} Frame ${currentFrame}`}
-            width={400}
-            height={300}
+        {allModelImages.map(({ model, images }) => (
+          <div
+            key={model.folderName}
             style={{
-              width: "400px",
-              height: "300px",
-              objectFit: "cover",
-              borderRadius: "8px",
-              pointerEvents: "none",
+              position: "relative",
+              display: "inline-block",
+              marginRight: "10px",
+              transition: "transform 0.5s ease",
+              transform:
+                expandedImage == model.folderName
+                  ? "translateY(-100vh)"
+                  : "translateY(0)",
             }}
-          />
-          {/* <div className="img-inset-shadow"></div> */}
-          <TransparentButton
-            onClick={() => handleButtonClick(mainImages[currentFrame].src)}
-            text={mainImages[currentFrame].buttonText || ""}
-          />
-        </div>
+          >
+            {/* Image */}
+            <Image
+              src={images[currentFrames[model.folderName]].src}
+              alt={`${model.folderName} Frame ${
+                currentFrames[model.folderName]
+              }`}
+              width={400}
+              height={400}
+              loading="eager"
+              style={{
+                width: "400px",
+                height: "400px",
+                objectFit: "cover",
+                borderRadius: "8px",
+                pointerEvents: "none",
+              }}
+            />
+            <div className="img-inset-shadow"></div>
+            <TransparentButton
+              onClick={() => handleButtonClick(model.folderName)}
+              text={images[currentFrames[model.folderName]].buttonText || ""}
+            />
+          </div>
+        ))}
       </div>
     </div>
   );
