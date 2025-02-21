@@ -72,6 +72,20 @@ const BenchGrad = ({ handleBack }) => {
             </p>
             <img src="JoshAndOlivia/Visit/06-10-23-0167-sunset.jpg" />
           </div>
+
+          <div className="card">
+            <h2>Accept my heart</h2>
+            <img src="JoshAndOlivia/Visit/2024-06-08-0009-card.JPG" />
+            <p>
+              Our relationship is such a unique gift and I am forever thanking
+              God for you.
+              <br />
+              He has planned things out so wonderfully.
+              <br />
+              All of you cards are so sweet and just an incredible showcase of
+              your love!
+            </p>
+          </div>
         </div>
       </div>
     </div>
