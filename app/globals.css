@@ -217,6 +217,7 @@ img {
   height: auto;
   min-height: 100vh;
   position: relative; /* Ensure the pseudo-element is positioned correctly */
+  overflow: hidden; /* Hide overflow from the pseudo-element */
 }
 
 .striped-page-wrapper {

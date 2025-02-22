@@ -8,7 +8,7 @@ const SENSITIVITY = 3;
 const MIN = 0;
 const MAX = 100;
 const DURATION = 1200;
-const animationSpeed = 42; // ~24fps
+const ANIMATIONSPEED = 42; // ~24fps
 interface ModelConfig {
   name: string;
   startFrame: number;
@@ -52,7 +52,7 @@ const ImageTrackComponent = ({ models }: ModelImageTrackProps) => {
             (prev[model.folderName] + 1) %
             (model.endFrame - model.startFrame + 1),
         }));
-      }, animationSpeed);
+      }, ANIMATIONSPEED);
     });
 
     return () => intervals.forEach(clearInterval);
@@ -231,6 +231,7 @@ const ImageTrackComponent = ({ models }: ModelImageTrackProps) => {
                 borderRadius: "8px",
                 pointerEvents: "none",
               }}
+              draggable="false"
             />
             <div className="img-inset-shadow"></div>
             <TransparentButton
