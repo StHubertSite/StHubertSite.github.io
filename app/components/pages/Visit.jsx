@@ -26,7 +26,7 @@ const BenchGrad = ({ handleBack }) => {
           <div className="card">
             <h2>Your beauty is like a flower.</h2>
             <p>A little flower that is delicate and perfect.</p>
-            <img src="JoshAndOlivia/Visit/2024-04-22-0242-flower.jpg" />
+            <img src="JoshAndOlivia/Visit/2024-04-22-0242-flower.JPG" />
             <p>
               There is something so sweet about you.
               <br />
@@ -34,7 +34,12 @@ const BenchGrad = ({ handleBack }) => {
               <br />I promise to shower you with love everyday
             </p>
           </div>
+          <div className="card">
+            <img src="JoshAndOlivia/Visit/09-06-23-0005-cute.JPG" />
+            <h2>You are just so CUTE!</h2>
+          </div>
         </div>
+
         <div className="card-column">
           <TransparentBackButton onClick={handleBack} text={"Back"} />
           <div className="card">
@@ -52,7 +57,7 @@ const BenchGrad = ({ handleBack }) => {
 
           <div className="card">
             <h2>Might we be lovers forever?</h2>
-            <img src="JoshAndOlivia/Visit/06-07-23-0105-hay.jpg" />
+            <img src="JoshAndOlivia/Visit/06-07-23-0105-hay.JPG" />
             <TransparentButtonComponent
               onClick={handleSoMuch}
               text={"???"}
@@ -70,7 +75,7 @@ const BenchGrad = ({ handleBack }) => {
               You shine like the sun and bring so much joy to those around you!
               <br />I want to spend every sunset by your side.
             </p>
-            <img src="JoshAndOlivia/Visit/06-10-23-0167-sunset.jpg" />
+            <img src="JoshAndOlivia/Visit/06-10-23-0167-sunset.JPG" />
           </div>
 
           <div className="card">

@@ -190,7 +190,7 @@ const Proposal = ({ handleBack }) => {
           </div>
           <div className="card">
             <h2>Jesus, I trust in you</h2>
-            <img src="JoshAndOlivia/Proposal/Litany.JPG" />
+            <img src="JoshAndOlivia/Proposal/2025-03-01-6735-litany.JPG" />
             <p>
               Jesus, I love you
               <br /> I love you, Jesus
